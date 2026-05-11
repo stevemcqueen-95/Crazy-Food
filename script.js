@@ -52,6 +52,9 @@ const policeButtonEl = document.querySelector("#policeButton");
 let victoryAudioContext;
 let victoryMusicTimer;
 let burglarTimer;
+let gameAudioContext;
+let backgroundMusicTimer;
+let backgroundMusicStep = 0;
 
 function formatNumber(value) {
   return Math.floor(value).toLocaleString();
@@ -123,10 +126,92 @@ function stopBurglar() {
   state.burglarActive = false;
 }
 
+function getGameAudioContext() {
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return null;
+
+  if (!gameAudioContext) {
+    gameAudioContext = new AudioContextClass();
+  }
+
+  if (gameAudioContext.state === "suspended") {
+    gameAudioContext.resume();
+  }
+
+  return gameAudioContext;
+}
+
+function playTone(context, destination, frequency, startTime, duration, type = "sine", volume = 0.18) {
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+  oscillator.type = type;
+  oscillator.frequency.setValueAtTime(frequency, startTime);
+  gain.gain.setValueAtTime(0.0001, startTime);
+  gain.gain.exponentialRampToValueAtTime(volume, startTime + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+  oscillator.connect(gain);
+  gain.connect(destination);
+  oscillator.start(startTime);
+  oscillator.stop(startTime + duration + 0.02);
+}
+
+function startBackgroundMusic() {
+  if (backgroundMusicTimer || state.won) return;
+
+  const context = getGameAudioContext();
+  if (!context) return;
+
+  const master = context.createGain();
+  master.gain.value = 0.055;
+  master.connect(context.destination);
+
+  const melody = [261.63, 329.63, 392, 329.63, 349.23, 440, 392, 329.63];
+  const bass = [130.81, 130.81, 174.61, 174.61, 196, 196, 174.61, 174.61];
+
+  function playBeat() {
+    if (!gameAudioContext || state.won) return;
+
+    const now = gameAudioContext.currentTime;
+    const index = backgroundMusicStep % melody.length;
+    playTone(gameAudioContext, master, melody[index], now, 0.24, "triangle", 0.22);
+
+    if (backgroundMusicStep % 2 === 0) {
+      playTone(gameAudioContext, master, bass[index], now, 0.32, "sine", 0.16);
+    }
+
+    backgroundMusicStep += 1;
+  }
+
+  playBeat();
+  backgroundMusicTimer = window.setInterval(playBeat, 360);
+}
+
+function stopBackgroundMusic() {
+  if (backgroundMusicTimer) {
+    window.clearInterval(backgroundMusicTimer);
+    backgroundMusicTimer = null;
+  }
+}
+
+function playBiteSound() {
+  const context = getGameAudioContext();
+  if (!context) return;
+
+  const now = context.currentTime;
+  const master = context.createGain();
+  master.gain.value = 0.18;
+  master.connect(context.destination);
+
+  playTone(context, master, 145, now, 0.08, "square", 0.5);
+  playTone(context, master, 92, now + 0.08, 0.1, "sawtooth", 0.36);
+  playTone(context, master, 210, now + 0.16, 0.06, "triangle", 0.2);
+}
+
 function playVictoryMusic() {
   const AudioContextClass = window.AudioContext || window.webkitAudioContext;
   if (!AudioContextClass) return;
 
+  stopBackgroundMusic();
   stopVictoryMusic();
   victoryAudioContext = new AudioContextClass();
   const master = victoryAudioContext.createGain();
@@ -183,6 +268,8 @@ function showFloater(text) {
 function chomp() {
   if (state.won) return;
 
+  startBackgroundMusic();
+  playBiteSound();
   state.coins += state.perClick;
   eaterEl.classList.add("eating");
   window.setTimeout(() => eaterEl.classList.remove("eating"), 135);
@@ -235,6 +322,8 @@ function retryGame() {
   state.policeCalled = false;
   stopBurglar();
   stopVictoryMusic();
+  stopBackgroundMusic();
+  backgroundMusicStep = 0;
   document.body.classList.remove("win");
   victoryScreenEl.classList.remove("show");
   victoryScreenEl.setAttribute("aria-hidden", "true");
@@ -263,6 +352,7 @@ function buildShop() {
 
 buildShop();
 eaterEl.addEventListener("click", chomp);
+document.addEventListener("pointerdown", startBackgroundMusic, { once: true });
 ultimateButtonEl.addEventListener("click", buyUltimate);
 retryButtonEl.addEventListener("click", retryGame);
 policeButtonEl.addEventListener("click", callPolice);
