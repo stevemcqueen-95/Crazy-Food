@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crazy Food</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="game-shell">
+      <section class="restaurant" aria-label="Fast food restaurant game scene">
+        <div class="window window-left"></div>
+        <div class="window window-right"></div>
+        <div class="counter"></div>
+        <div class="menu-board">
+          <span>Burgers</span>
+          <span>Fries</span>
+          <span>Shakes</span>
+        </div>
+        <div class="arches" aria-hidden="true">
+          <span></span>
+          <span></span>
+        </div>
+
+        <header class="top-bar">
+          <div>
+            <p class="eyebrow">Clicker restaurant</p>
+            <h1>Crazy Food</h1>
+          </div>
+          <div class="coin-card" aria-live="polite">
+            <span class="coin-icon">$</span>
+            <div>
+              <span id="coins">0</span>
+              <small>coins</small>
+            </div>
+          </div>
+        </header>
+
+        <section class="play-area">
+          <button id="eater" class="eater" type="button" aria-label="Feed the hungry burger fan">
+            <span class="head">
+              <span class="hair"></span>
+              <span class="eye eye-left"></span>
+              <span class="eye eye-right"></span>
+              <span class="mouth"></span>
+            </span>
+            <span class="body"></span>
+            <span id="food" class="food burger" aria-hidden="true">
+              <span class="bun top"></span>
+              <span class="lettuce"></span>
+              <span class="cheese"></span>
+              <span class="patty"></span>
+              <span class="bun bottom"></span>
+            </span>
+          </button>
+          <div id="floaters" class="floaters" aria-hidden="true"></div>
+        </section>
+
+        <aside class="shop" aria-label="Food shop">
+          <div class="stats">
+            <div>
+              <small>Per bite</small>
+              <strong id="perClick">1</strong>
+            </div>
+            <div>
+              <small>Goal</small>
+              <strong id="goalLabel">1,000,000,000</strong>
+            </div>
+          </div>
+
+          <div class="progress-wrap" aria-label="Progress toward ultimate food item">
+            <div class="progress-label">
+              <span>Ultimate Feast</span>
+              <span id="progressText">0%</span>
+            </div>
+            <div class="progress-track">
+              <div id="progressBar" class="progress-bar"></div>
+            </div>
+          </div>
+
+          <div id="burglarPanel" class="burglar-panel" aria-live="polite">
+            <span class="burglar-icon" aria-hidden="true">🕶️</span>
+            <div>
+              <strong id="burglarTitle">Restaurant secure</strong>
+              <small id="burglarText">Burglars appear after 25,000,000 coins.</small>
+            </div>
+          </div>
+
+          <div id="shopItems" class="shop-items"></div>
+          <button id="ultimateButton" class="ultimate-button" type="button" disabled>
+            Buy Ultimate Food Item
+          </button>
+          <button id="policeButton" class="police-button" type="button" disabled>
+            Call Police
+          </button>
+          <p id="message" class="message">Click the eater to chomp burgers and earn coins.</p>
+        </aside>
+
+        <section id="victoryScreen" class="victory-screen" aria-labelledby="victoryTitle" aria-hidden="true">
+          <div class="victory-panel">
+            <div class="victory-food" aria-hidden="true">🍔🍟🥤🍰</div>
+            <p class="eyebrow">Ultimate food unlocked</p>
+            <h2 id="victoryTitle">Crazy Food Victory</h2>
+            <p>You saved enough coins, bought the ultimate food item, and finished the feast.</p>
+            <button id="retryButton" class="retry-button" type="button">Retry Game</button>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
