@@ -1,6 +1,7 @@
 const state = {
   coins: 0,
   perClick: 1,
+  clickCount: 0,
   won: false,
   purchased: new Set(),
   burglarActive: false,
@@ -207,6 +208,24 @@ function playBiteSound() {
   playTone(context, master, 210, now + 0.16, 0.06, "triangle", 0.2);
 }
 
+function playMoneySound() {
+  const context = getGameAudioContext();
+  if (!context) return;
+
+  const now = context.currentTime;
+  const master = context.createGain();
+  master.gain.value = 0.16;
+  master.connect(context.destination);
+
+  [987.77, 1318.51, 1567.98].forEach((frequency, index) => {
+    playTone(context, master, frequency, now + index * 0.055, 0.16, "triangle", 0.34);
+  });
+
+  [1760, 2217.46].forEach((frequency, index) => {
+    playTone(context, master, frequency, now + 0.22 + index * 0.05, 0.12, "sine", 0.22);
+  });
+}
+
 function playVictoryMusic() {
   const AudioContextClass = window.AudioContext || window.webkitAudioContext;
   if (!AudioContextClass) return;
@@ -270,6 +289,10 @@ function chomp() {
 
   startBackgroundMusic();
   playBiteSound();
+  state.clickCount += 1;
+  if (state.clickCount % 10 === 0) {
+    playMoneySound();
+  }
   state.coins += state.perClick;
   eaterEl.classList.add("eating");
   window.setTimeout(() => eaterEl.classList.remove("eating"), 135);
@@ -316,6 +339,7 @@ function callPolice() {
 function retryGame() {
   state.coins = 0;
   state.perClick = 1;
+  state.clickCount = 0;
   state.won = false;
   state.purchased.clear();
   state.burglarActive = false;
