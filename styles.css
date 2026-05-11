@@ -21,10 +21,14 @@ body {
   color: var(--ink);
   background: #7bb7d8;
   overflow-x: hidden;
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
 }
 
 button {
   font: inherit;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .game-shell {
@@ -88,6 +92,19 @@ button {
     linear-gradient(#ca1d1d 0 58px, #ffe16a 58px 76px, #b71717 76px),
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.12) 0 18px, transparent 18px 54px);
   border-top: 8px solid #8f1111;
+}
+
+.bottom-credit {
+  position: absolute;
+  z-index: 2;
+  left: 18px;
+  right: 18px;
+  bottom: 12px;
+  color: #fff8d9;
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-align: center;
+  text-shadow: 0 2px 0 #8f1111;
 }
 
 .menu-board {
