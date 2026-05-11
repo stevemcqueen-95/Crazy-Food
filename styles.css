@@ -21,8 +21,10 @@ body {
   color: var(--ink);
   background: #7bb7d8;
   overflow-x: hidden;
-  touch-action: manipulation;
+  overflow-y: auto;
+  touch-action: pan-y;
   -webkit-text-size-adjust: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 button {
@@ -705,8 +707,15 @@ h1 {
 }
 
 @media (max-width: 880px) {
+  .game-shell {
+    display: block;
+    min-height: 100vh;
+    padding: 10px;
+  }
+
   .restaurant {
-    min-height: 980px;
+    min-height: 0;
+    overflow: hidden;
   }
 
   .top-bar {
@@ -733,12 +742,18 @@ h1 {
   }
 
   .shop {
-    left: 18px;
-    right: 18px;
+    position: relative;
+    left: auto;
+    right: auto;
     top: auto;
-    bottom: 18px;
+    bottom: auto;
     width: auto;
-    max-height: 365px;
+    max-height: none;
+    margin: 460px 14px 72px;
+  }
+
+  .shop-items {
+    overflow: visible;
   }
 
   .window {
